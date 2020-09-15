@@ -5,8 +5,6 @@ pd.set_option('max_columns', None)
 
 # train = pd.read_csv('https://raw.githubusercontent.com/bigpappathanos-web/open_vaccine_covid/master/train_outliers_removed.csv')
 train = pd.read_csv('train_outliers_removed.csv')
-
-
 num = 13
 def int_list(lst):
     lst = lst.split(',')
@@ -61,8 +59,8 @@ for index, row in tqdm(train.iterrows()):
     }
     colors[row['id']] = {str(index):get_color(int(item)) for index, item in enumerate(int_list(row['deg_error_Mg_pH10']))}
     
-sequences = dict(list(sequences.items())[0: 10])  
-colors = dict(list(colors.items())[0: 10])  
+# sequences = dict(list(sequences.items())[0: 10])  
+# colors = dict(list(colors.items())[0: 10])  
 # sequences
 
 
