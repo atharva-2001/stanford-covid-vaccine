@@ -42,9 +42,9 @@ def get_color(rtg):
 # sequences is a dict with ids as keys and sequence and structure key value pairs as the sub dictionary to each key
 sequences = dict()
 colors = dict()
-from collections import defaultdict
-options = [ 'deg_error_Mg_pH10', 'deg_error_pH10', 'deg_error_Mg_50C', 'deg_error_50C', 'deg_Mg_pH10', 'deg_pH10', 'deg_Mg_50C', 'deg_50C']
-options_n_vals = dict.fromkeys(options, [])
+# from collections import defaultdict
+# options = [ 'deg_error_Mg_pH10', 'deg_error_pH10', 'deg_error_Mg_50C', 'deg_error_50C', 'deg_Mg_pH10', 'deg_pH10', 'deg_Mg_50C', 'deg_50C']
+# options_n_vals = dict.fromkeys(options, [])
 
 from tqdm import tqdm
 for index, row in tqdm(train.iterrows()):
@@ -52,9 +52,9 @@ for index, row in tqdm(train.iterrows()):
         "sequence": row["sequence"][0:68],
         "structure": row["structure"][0:68],
     }
-    for item in options:
-        vals[item] = int_list(row[item])
-        options_n_vals[item] += vals[item] 
+    # for item in options:
+    #     vals[item] = int_list(row[item])
+    #     options_n_vals[item] += vals[item] 
     sequences[row["id"]] = vals
         
     colors[row["id"]] = {
@@ -76,17 +76,11 @@ cols = [
     {"name": "stucture", "id": "stucture"},
 ]
 
-degrade = make_subplots(rows = 4, cols = 2)
-
-# for i, key in zip(range(4), list(options_n_vals)[0:4]):
-#     degrade.add_trace(go.Histogram(x = options_n_vals[key]), row = i+1, col = 1)
-# for i, key in zip(range(4, 8), list(options_n_vals)[4:8]):
-#     degrade.add_trace(go.Histogram(x = options_n_vals[key]), row = i, col = 2)
-    
-rows = [1,2,3,4,1,2,3,4]
-cols = [1,1,1,1,2,2,2,2]
-for option, row, col in zip(options, rows, cols):
-    degrade.add_trace(go.Histogram(x = options_n_vals[option]), row = row, col = col)
+# degrade = make_subplots(rows = 4, cols = 2)  
+# rows = [1,2,3,4,1,2,3,4]
+# cols = [1,1,1,1,2,2,2,2]
+# for option, row, col in zip(options, rows, cols):
+#     degrade.add_trace(go.Histogram(x = options_n_vals[option]), row = row, col = col)
     
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
@@ -130,8 +124,8 @@ app.layout = html.Div(
             style={"font-size": "22px", "fontFamily": "Lucida Console",},
         ),
         dcc.Graph(id = 'base-histogram'),
-        dcc.Graph(id = 'stn-histogram', figure = px.histogram(x = train['signal_to_noise']) ),
-        dcc.Graph(id = 'degrade', figure = degrade )
+        dcc.Graph(id = 'stn-histogram', figure = px.histogram(x = train['signal_to_noise']) )
+        # dcc.Graph(id = 'degrade', figure = degrade )
         # dcc.Dropdown(
         #     id = 'selector',
         #     options = [{'label': item, 'value': item} for item in ["id_001f94081"]],
