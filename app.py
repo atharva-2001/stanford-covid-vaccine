@@ -1,8 +1,18 @@
 import os
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+import plotly.express as px
+import plotly.offline as po
+import plotly.graph_objects as go
+import colorsys
+from plotly.subplots import make_subplots
+import dash
+import dash_bio as dashbio
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.exceptions import PreventUpdate
+from dash_table import DataTable
 
-pd.set_option("max_columns", None)
 
 train = pd.read_csv("train_outliers_removed.csv")
 
@@ -14,13 +24,6 @@ def int_list(lst):
 
     lst = [float(item) for item in lst]
     return lst
-
-
-import plotly.express as px
-import plotly.offline as po
-import plotly.graph_objects as go
-import colorsys
-
 
 def get_color(rtg):
     if type(rtg) is int:
@@ -34,34 +37,32 @@ def get_color(rtg):
     val_str = "rgb" + "(" + str(val[0]) + ", " + str(val[1]) + ", " + str(val[2]) + ")"
     return val_str
 
+
+
 # sequences is a dict with ids as keys and sequence and structure key value pairs as the sub dictionary to each key
 sequences = dict()
 colors = dict()
-from tqdm import tqdm
+from collections import defaultdict
+options = [ 'deg_error_Mg_pH10', 'deg_error_pH10', 'deg_error_Mg_50C', 'deg_error_50C', 'deg_Mg_pH10', 'deg_pH10', 'deg_Mg_50C', 'deg_50C']
+options_n_vals = dict.fromkeys(options, [])
 
+from tqdm import tqdm
 for index, row in tqdm(train.iterrows()):
-    sequences[row["id"]] = {
+    vals = {
         "sequence": row["sequence"][0:68],
         "structure": row["structure"][0:68],
     }
+    for item in options:
+        vals[item] = int_list(row[item])
+        options_n_vals[item] += vals[item] 
+    sequences[row["id"]] = vals
+        
     colors[row["id"]] = {
         str(index): get_color(int(item))
         for index, item in enumerate(int_list(row["deg_error_Mg_pH10"]))
     }
 
-
-import dash
-import dash_bio as dashbio
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.exceptions import PreventUpdate
-from dash_table import DataTable
-
-external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.scripts.config.serve_locally = True
-server = app.server
+# for datatable
 df = pd.DataFrame(
     {
         "ID": ["id_001f94081"],
@@ -74,6 +75,26 @@ cols = [
     {"name": "sequence", "id": "sequence"},
     {"name": "stucture", "id": "stucture"},
 ]
+
+degrade = make_subplots(rows = 4, cols = 2)
+
+# for i, key in zip(range(4), list(options_n_vals)[0:4]):
+#     degrade.add_trace(go.Histogram(x = options_n_vals[key]), row = i+1, col = 1)
+# for i, key in zip(range(4, 8), list(options_n_vals)[4:8]):
+#     degrade.add_trace(go.Histogram(x = options_n_vals[key]), row = i, col = 2)
+    
+rows = [1,2,3,4,1,2,3,4]
+cols = [1,1,1,1,2,2,2,2]
+for option, row, col in zip(options, rows, cols):
+    degrade.add_trace(go.Histogram(x = options_n_vals[option]), row = row, col = col)
+    
+
+external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.scripts.config.serve_locally = True
+server = app.server
+
 app.layout = html.Div(
     [
         dashbio.FornaContainer(
@@ -109,7 +130,8 @@ app.layout = html.Div(
             style={"font-size": "22px", "fontFamily": "Lucida Console",},
         ),
         dcc.Graph(id = 'base-histogram'),
-        dcc.Graph(id = 'stn-histogram')
+        dcc.Graph(id = 'stn-histogram', figure = px.histogram(x = train['signal_to_noise']) ),
+        dcc.Graph(id = 'degrade', figure = degrade )
         # dcc.Dropdown(
         #     id = 'selector',
         #     options = [{'label': item, 'value': item} for item in ["id_001f94081"]],
@@ -134,8 +156,7 @@ app.layout = html.Div(
     [
         dash.dependencies.Output("forna", "sequences"),
         dash.dependencies.Output("brief-data", "data"),
-        dash.dependencies.Output('base-histogram', 'figure'),
-        dash.dependencies.Output('stn-histogram', 'figure')
+        dash.dependencies.Output('base-histogram', 'figure')
     ],
     [dash.dependencies.Input("forna-sequence-display", "value")],
 )
@@ -178,11 +199,11 @@ def show_selected_sequences(value):
         bargap = 0.1
     )
 
-    stn_hist = px.histogram(x = train['signal_to_noise']) 
+
 
     return (
         [sequences[selected_sequence] for selected_sequence in value],
-        df.to_dict("records"),base_count_hist, stn_hist
+        df.to_dict("records"),base_count_hist
     )
 
 
