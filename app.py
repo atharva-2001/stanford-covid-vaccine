@@ -71,7 +71,7 @@ external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.scripts.config.serve_locally = True
-
+server = app.server
 
 # sequences is a dict with ids as keys and sequence and structure key value pairs as the sub dictionary to each key
 df = pd.DataFrame(
