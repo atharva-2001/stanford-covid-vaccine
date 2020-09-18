@@ -48,16 +48,16 @@ from tqdm import tqdm
 
 for index, row in tqdm(train.iterrows()):
     sequences[row["id"]] = {
-        "sequence": row["sequence"],
-        "structure": row["structure"],
+        "sequence": row["sequence"][0:68],
+        "structure": row["structure"][0:68],
     }
     colors[row["id"]] = {
         str(index): get_color(int(item))
         for index, item in enumerate(int_list(row["deg_error_Mg_pH10"]))
     }
 
-sequences = dict(list(sequences.items())[0:10])
-colors = dict(list(colors.items())[0:10])
+# sequences = dict(list(sequences.items())[0:10])
+# colors = dict(list(colors.items())[0:10])
 
 
 import dash
