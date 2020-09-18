@@ -4,13 +4,9 @@ import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 
 pd.set_option("max_columns", None)
 
-# train = pd.read_csv('https://raw.githubusercontent.com/bigpappathanos-web/open_vaccine_covid/master/train_outliers_removed.csv')
 train = pd.read_csv("train_outliers_removed.csv")
 
-
 num = 13
-
-
 def int_list(lst):
     lst = lst.split(",")
     lst[0] = lst[0].split("[")[1]
@@ -23,7 +19,6 @@ def int_list(lst):
 import plotly.express as px
 import plotly.offline as po
 import plotly.graph_objects as go
-
 import colorsys
 
 
@@ -39,9 +34,7 @@ def get_color(rtg):
     val_str = "rgb" + "(" + str(val[0]) + ", " + str(val[1]) + ", " + str(val[2]) + ")"
     return val_str
 
-
-get_color("p")
-
+# sequences is a dict with ids as keys and sequence and structure key value pairs as the sub dictionary to each key
 sequences = dict()
 colors = dict()
 from tqdm import tqdm
@@ -56,9 +49,6 @@ for index, row in tqdm(train.iterrows()):
         for index, item in enumerate(int_list(row["deg_error_Mg_pH10"]))
     }
 
-# sequences = dict(list(sequences.items())[0:10])
-# colors = dict(list(colors.items())[0:10])
-
 
 import dash
 import dash_bio as dashbio
@@ -72,8 +62,6 @@ external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.scripts.config.serve_locally = True
 server = app.server
-
-# sequences is a dict with ids as keys and sequence and structure key value pairs as the sub dictionary to each key
 df = pd.DataFrame(
     {
         "ID": ["id_001f94081"],
@@ -81,7 +69,6 @@ df = pd.DataFrame(
         "stucture": [sequences["id_001f94081"]["structure"]],
     }
 ).to_dict("records")
-
 cols = [
     {"name": "ID", "id": "ID"},
     {"name": "sequence", "id": "sequence"},
@@ -95,7 +82,7 @@ app.layout = html.Div(
             # customColors = colors,
             height=700,
             width=1000,
-        ),
+        ), # forna container
         html.Div(
             DataTable(
                 id="brief-data",
@@ -121,35 +108,79 @@ app.layout = html.Div(
             value=["id_001f94081"],
             style={"font-size": "22px", "fontFamily": "Lucida Console",},
         ),
+        dcc.Graph(id = 'base-histogram')
+        # dcc.Dropdown(
+        #     id = 'selector',
+        #     options = [{'label': item, 'value': item} for item in ["id_001f94081"]],
+        #     multi = True,
+        #     value = ["id_001f94081"],
+        #     style={"font-size": "22px", "fontFamily": "Lucida Console"}
+        # )
+
     ]
 )
 
+# @app.callback([
+#     dash.dependencies.Output('selector', 'options')
+# ], [
+#     dash.dependencies.Input('forna-sequence-display', 'value')
+# ])
+# def set_options(value):
+#     opts = [{'label': item, 'value': item} for item in value]
+#     return opts
 
 @app.callback(
     [
         dash.dependencies.Output("forna", "sequences"),
         dash.dependencies.Output("brief-data", "data"),
+        dash.dependencies.Output('base-histogram', 'figure')
     ],
     [dash.dependencies.Input("forna-sequence-display", "value")],
 )
 def show_selected_sequences(value):
     if value is None:
-        raise PreventUpdate
+        raise PreventUpdate 
 
-    sent = ""
+    # opts are options for the second dropdown
+    # value has selected values
+
     seq, struc = [], []
-
     for index, selection in enumerate(value):
-
+        _ = index # was giving me an error so this
         seq.append(sequences[selection]["sequence"])
         struc.append(sequences[selection]["structure"])
         # sent = sent + "For ID {}, Sequence: {} \n Structure: {}".format(selection, seq[-1], struc[-1])
 
     df = pd.DataFrame({"ID": value, "sequence": seq, "stucture": struc})
 
+
+    lst2 = []
+    fig = go.Figure()
+    for item in seq:
+        lst2 = list(item)
+        y = [
+                lst2.count('A'),
+                lst2.count('C'),
+                lst2.count('G'),
+                lst2.count('U'),
+            ]
+        fig.add_trace(go.Bar(
+            x = ['A', 'C', 'G', 'U'],
+            y = y, 
+            name = item
+        ))
+
+    fig.update_layout(
+        title = 'Base Count',
+        barmode = 'group',
+        bargap = 0.1
+    )
+
+
+
     return (
         [sequences[selected_sequence] for selected_sequence in value],
-        df.to_dict("records"),
+        df.to_dict("records"),fig
     )
 
 
