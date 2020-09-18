@@ -48,8 +48,8 @@ from tqdm import tqdm
 
 for index, row in tqdm(train.iterrows()):
     sequences[row["id"]] = {
-        "sequence": row["sequence"][0:68],
-        "structure": row["structure"][0:68],
+        "sequence": row["sequence"],
+        "structure": row["structure"],
     }
     colors[row["id"]] = {
         str(index): get_color(int(item))
