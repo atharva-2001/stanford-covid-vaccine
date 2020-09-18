@@ -146,9 +146,7 @@ def show_selected_sequences(value):
         # sent = sent + "For ID {}, Sequence: {} \n Structure: {}".format(selection, seq[-1], struc[-1])
 
     df = pd.DataFrame({"ID": value, "sequence": seq, "stucture": struc})
-    print()
-    print(df.to_dict("records"))
-    print("\t")
+
     return (
         [sequences[selected_sequence] for selected_sequence in value],
         df.to_dict("records"),
