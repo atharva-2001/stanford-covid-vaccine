@@ -108,7 +108,8 @@ app.layout = html.Div(
             value=["id_001f94081"],
             style={"font-size": "22px", "fontFamily": "Lucida Console",},
         ),
-        dcc.Graph(id = 'base-histogram')
+        dcc.Graph(id = 'base-histogram'),
+        dcc.Graph(id = 'stn-histogram')
         # dcc.Dropdown(
         #     id = 'selector',
         #     options = [{'label': item, 'value': item} for item in ["id_001f94081"]],
@@ -133,7 +134,8 @@ app.layout = html.Div(
     [
         dash.dependencies.Output("forna", "sequences"),
         dash.dependencies.Output("brief-data", "data"),
-        dash.dependencies.Output('base-histogram', 'figure')
+        dash.dependencies.Output('base-histogram', 'figure'),
+        dash.dependencies.Output('stn-histogram', 'figure')
     ],
     [dash.dependencies.Input("forna-sequence-display", "value")],
 )
@@ -155,7 +157,7 @@ def show_selected_sequences(value):
 
 
     lst2 = []
-    fig = go.Figure()
+    base_count_hist = go.Figure()
     for item in seq:
         lst2 = list(item)
         y = [
@@ -164,23 +166,23 @@ def show_selected_sequences(value):
                 lst2.count('G'),
                 lst2.count('U'),
             ]
-        fig.add_trace(go.Bar(
+        base_count_hist.add_trace(go.Bar(
             x = ['A', 'C', 'G', 'U'],
             y = y, 
             name = item
         ))
 
-    fig.update_layout(
+    base_count_hist.update_layout(
         title = 'Base Count',
         barmode = 'group',
         bargap = 0.1
     )
 
-
+    stn_hist = px.histogram(x = train['signal_to_noise']) 
 
     return (
         [sequences[selected_sequence] for selected_sequence in value],
-        df.to_dict("records"),fig
+        df.to_dict("records"),base_count_hist, stn_hist
     )
 
 
