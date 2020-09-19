@@ -131,7 +131,7 @@ app.layout = html.Div(
             id="forna",
             colorScheme="structure",
             # customColors = colors,
-            height=700,
+            height=600,
             width=1000,
         ),  # forna container
         html.Div(
@@ -140,7 +140,7 @@ app.layout = html.Div(
                 data=df,
                 columns=cols,
                 style_cell={
-                    "font-size": "22px",
+                    "font-size": "16px",
                     "whiteSpace": "normal",
                     "height": "auto",
                 },
@@ -150,14 +150,14 @@ app.layout = html.Div(
         html.Hr(),
         html.P(
             "Select the sequences to display below.",
-            style={"font-size": "22px", "fontFamily": "Lucida Console"},
+            style={"font-size": "21px", "fontFamily": "Lucida Console"},
         ),
         dcc.Dropdown(
             id="forna-sequence-display",
             options=[{"label": name, "value": name} for name in sequences.keys()],
             multi=True,
             value=["id_001f94081"],
-            style={"font-size": "22px", "fontFamily": "Lucida Console",},
+            style={"font-size": "17px", "fontFamily": "Lucida Console",},
         ),
         dcc.Graph(id="base-histogram"),
         dcc.Graph(id="bar1"),
