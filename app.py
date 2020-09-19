@@ -17,6 +17,8 @@ from dash_table import DataTable
 train = pd.read_csv("train_outliers_removed.csv")
 
 num = 13
+
+
 def int_list(lst):
     lst = lst.split(",")
     lst[0] = lst[0].split("[")[1]
@@ -24,6 +26,7 @@ def int_list(lst):
 
     lst = [float(item) for item in lst]
     return lst
+
 
 def get_color(rtg):
     if type(rtg) is int:
@@ -38,16 +41,26 @@ def get_color(rtg):
     return val_str
 
 
-
 # sequences is a dict with ids as keys and sequence and structure key value pairs as the sub dictionary to each key
 sequences = dict()
 colors = dict()
 # from collections import defaultdict
-options = [ 'deg_error_Mg_pH10', 'deg_error_pH10', 
-    'deg_error_Mg_50C', 'deg_error_50C', 'deg_Mg_pH10', 'deg_pH10', 'deg_Mg_50C', 'deg_50C', 'reactivity_error','reactivity' ]
+options = [
+    "deg_error_Mg_pH10",
+    "deg_error_pH10",
+    "deg_error_Mg_50C",
+    "deg_error_50C",
+    "deg_Mg_pH10",
+    "deg_pH10",
+    "deg_Mg_50C",
+    "deg_50C",
+    "reactivity_error",
+    "reactivity",
+]
 # options_n_vals = dict.fromkeys(options, [])
 
 from tqdm import tqdm
+
 for index, row in tqdm(train.iterrows()):
     vals = {
         "sequence": row["sequence"][0:68],
@@ -55,9 +68,9 @@ for index, row in tqdm(train.iterrows()):
     }
     for item in options:
         vals[item] = int_list(row[item])
-        # options_n_vals[item] += vals[item] 
+        # options_n_vals[item] += vals[item]
     sequences[row["id"]] = vals
-        
+
     colors[row["id"]] = {
         str(index): get_color(int(item))
         for index, item in enumerate(int_list(row["deg_error_Mg_pH10"]))
@@ -77,37 +90,33 @@ cols = [
     {"name": "stucture", "id": "stucture"},
 ]
 
-# degrade = make_subplots(rows = 4, cols = 2)  
+# degrade = make_subplots(rows = 4, cols = 2)
 # rows = [1,2,3,4,1,2,3,4]
 # cols = [1,1,1,1,2,2,2,2]
 # for option, row, col in zip(options, rows, cols):
 #     degrade.add_trace(go.Histogram(x = options_n_vals[option]), row = row, col = col)
 
+
 def grapher(ids, option):
-    '''
+    """
     The argument given to this function is a list of ids. and a column name
     The function's desired output is to return graph for the ids
     the value of the data is stored in sequences['column-name'], and the degradation values
     are yes, in float :)
-    '''
+    """
 
     fig = go.Figure()
     for id_ in ids:
         y = sequences[id_][option]
-        fig.add_trace(go.Bar(
-            x = list(sequences[id_]['sequence']),
-            y = y
-            # marker={
-            #         'colorscale': 'Viridis'}
-            ,name = id_ + '<br>' + sequences[id_]['sequence']
-        ))
-    fig.update_layout(
-        title = option,
-        barmode = 'group',
-        bargap = 0.1
-    )
+        fig.add_trace(
+            go.Bar(
+                x=list(sequences[id_]["sequence"]),
+                y=y,
+                name=id_ + "<br>" + sequences[id_]["sequence"],
+            )
+        )
+    fig.update_layout(title=option, barmode="group", bargap=0.1)
     return fig
-
 
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
@@ -124,7 +133,7 @@ app.layout = html.Div(
             # customColors = colors,
             height=700,
             width=1000,
-        ), # forna container
+        ),  # forna container
         html.Div(
             DataTable(
                 id="brief-data",
@@ -150,20 +159,23 @@ app.layout = html.Div(
             value=["id_001f94081"],
             style={"font-size": "22px", "fontFamily": "Lucida Console",},
         ),
-        dcc.Graph(id = 'base-histogram'),
-        dcc.Graph(id = 'bar1'),
-        dcc.Graph(id = 'bar2'),
-        dcc.Graph(id = 'bar3'),
-        dcc.Graph(id = 'bar4'),
-        dcc.Graph(id = 'bar5'),
-        dcc.Graph(id = 'bar6'),
-        dcc.Graph(id = 'bar7'),
-        dcc.Graph(id = 'bar8'),
-        dcc.Graph(id = 'bar9'),
-        dcc.Graph(id = 'bar10'),
-
-
-        dcc.Graph(id = 'stn-histogram', figure = px.histogram(x = train['signal_to_noise'] , title = 'signal to noise histogram'))
+        dcc.Graph(id="base-histogram"),
+        dcc.Graph(id="bar1"),
+        dcc.Graph(id="bar2"),
+        dcc.Graph(id="bar3"),
+        dcc.Graph(id="bar4"),
+        dcc.Graph(id="bar5"),
+        dcc.Graph(id="bar6"),
+        dcc.Graph(id="bar7"),
+        dcc.Graph(id="bar8"),
+        dcc.Graph(id="bar9"),
+        dcc.Graph(id="bar10"),
+        dcc.Graph(
+            id="stn-histogram",
+            figure=px.histogram(
+                x=train["signal_to_noise"], title="signal to noise histogram"
+            ),
+        )
         # dcc.Graph(id = 'degrade', figure = degrade )
         # dcc.Dropdown(
         #     id = 'selector',
@@ -172,7 +184,6 @@ app.layout = html.Div(
         #     value = ["id_001f94081"],
         #     style={"font-size": "22px", "fontFamily": "Lucida Console"}
         # )
-
     ]
 )
 
@@ -181,66 +192,71 @@ app.layout = html.Div(
     [
         dash.dependencies.Output("forna", "sequences"),
         dash.dependencies.Output("brief-data", "data"),
-        dash.dependencies.Output('base-histogram', 'figure'),
-        dash.dependencies.Output('bar1', 'figure'),
-        dash.dependencies.Output('bar2', 'figure'),
-        dash.dependencies.Output('bar3', 'figure'),
-        dash.dependencies.Output('bar4', 'figure'),
-        dash.dependencies.Output('bar5', 'figure'),
-        dash.dependencies.Output('bar6', 'figure'),
-        dash.dependencies.Output('bar7', 'figure'),
-        dash.dependencies.Output('bar8', 'figure'),
-        dash.dependencies.Output('bar9', 'figure'),
-        dash.dependencies.Output('bar10','figure')
+        dash.dependencies.Output("base-histogram", "figure"),
+        dash.dependencies.Output("bar1", "figure"),
+        dash.dependencies.Output("bar2", "figure"),
+        dash.dependencies.Output("bar3", "figure"),
+        dash.dependencies.Output("bar4", "figure"),
+        dash.dependencies.Output("bar5", "figure"),
+        dash.dependencies.Output("bar6", "figure"),
+        dash.dependencies.Output("bar7", "figure"),
+        dash.dependencies.Output("bar8", "figure"),
+        dash.dependencies.Output("bar9", "figure"),
+        dash.dependencies.Output("bar10", "figure"),
     ],
     [dash.dependencies.Input("forna-sequence-display", "value")],
 )
 def show_selected_sequences(value):
     if value is None:
-        raise PreventUpdate 
+        raise PreventUpdate
 
     # opts are options for the second dropdown
     # value has selected values
 
     seq, struc = [], []
     for index, selection in enumerate(value):
-        _ = index # was giving me an error so this
+        _ = index  # was giving me an error so this
         seq.append(sequences[selection]["sequence"])
         struc.append(sequences[selection]["structure"])
         # sent = sent + "For ID {}, Sequence: {} \n Structure: {}".format(selection, seq[-1], struc[-1])
 
     df = pd.DataFrame({"ID": value, "sequence": seq, "stucture": struc})
 
-
     lst2 = []
     base_count_hist = go.Figure()
-    for selection, item in zip(value,seq):
+    for selection, item in zip(value, seq):
         lst2 = list(item)
         y = [
-                lst2.count('A'),
-                lst2.count('C'),
-                lst2.count('G'),
-                lst2.count('U'),
-            ]
-        base_count_hist.add_trace(go.Bar(
-            x = ['A', 'C', 'G', 'U'],
-            y = y, 
-            name = selection + '<br>' + item
-            #  marker={'colorscale': 'Viridis'}
-        ))
+            lst2.count("A"),
+            lst2.count("C"),
+            lst2.count("G"),
+            lst2.count("U"),
+        ]
+        base_count_hist.add_trace(
+            go.Bar(
+                x=["A", "C", "G", "U"],
+                y=y,
+                name=selection + "<br>" + item
+                #  marker={'colorscale': 'Viridis'}
+            )
+        )
 
-    base_count_hist.update_layout(
-        title = 'Base Count',
-        barmode = 'group',
-        bargap = 0.1
-    )
+    base_count_hist.update_layout(title="Base Count", barmode="group", bargap=0.1)
 
     return (
         [sequences[selected_sequence] for selected_sequence in value],
-        df.to_dict("records"),base_count_hist, grapher(value,'reactivity_error' ), grapher(value,'deg_error_Mg_pH10' ),grapher(value,'deg_error_pH10' ), 
-        grapher(value,'deg_error_Mg_50C' ), grapher(value,'deg_error_50C' ),grapher(value,'reactivity' ),
-        grapher(value,'deg_Mg_pH10' ), grapher(value,'deg_pH10' ), 
-        grapher(value,'deg_Mg_50C' ), grapher(value,'deg_50C' )
+        df.to_dict("records"),
+        base_count_hist,
+        grapher(value, "reactivity_error"),
+        grapher(value, "deg_error_Mg_pH10"),
+        grapher(value, "deg_error_pH10"),
+        grapher(value, "deg_error_Mg_50C"),
+        grapher(value, "deg_error_50C"),
+        grapher(value, "reactivity"),
+        grapher(value, "deg_Mg_pH10"),
+        grapher(value, "deg_pH10"),
+        grapher(value, "deg_Mg_50C"),
+        grapher(value, "deg_50C"),
     )
 
 
