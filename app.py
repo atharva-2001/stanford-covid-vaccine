@@ -118,6 +118,51 @@ def grapher(ids, option):
     fig.update_layout(title=option, barmode="group", bargap=0.1)
     return fig
 
+def heatmap(id_, num, i):
+    '''
+    creates a heatmap TRACE that gives more insights on the sequences/ids selected 
+    pass ids as list and an option, the column name
+    returns a trace 
+    '''
+    options = ['reactivity', 'deg_Mg_pH10', 'deg_pH10', 'deg_Mg_50C', 'deg_50C']
+    z = []
+
+    for option in options:
+        z.append(sequences[id_][option])
+
+    if i == 0:
+        padding = -0.2
+    if i == num - 1:
+        padding = 0.2
+
+    trace = go.Heatmap(
+        z = z, 
+        x = list(sequences[id_]['sequence']),
+        y = options,
+        coloraxis = "coloraxis"
+        # colorbar = dict(
+        #     len = 5/num - 0.5,
+        #     ypad = 0.2,
+        #     y = 3 - (5/(num + 1)) * i
+        # )
+    )
+
+    return trace
+
+def subs(ids):
+    '''
+    creates subplots of heatmaps(at the movement)
+    a list of ids
+    '''
+    fig = make_subplots(rows  =len(ids), cols = 1, shared_yaxes = 'columns')
+    num = len(ids)
+    for i, id_ in enumerate(ids):
+        fig.add_trace(heatmap(id_, num, i + 1), 
+                    row = i+ 1, 
+                    col = 1)
+    fig.update_layout(title_text = "comparision of degradation rates", coloraxis = {'colorscale':'viridis'})
+
+    return fig
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
@@ -175,7 +220,8 @@ app.layout = html.Div(
             figure=px.histogram(
                 x=train["signal_to_noise"], title="signal to noise histogram"
             ),
-        )
+        ),
+        dcc.Graph(id = 'heatmaps')
         # dcc.Graph(id = 'degrade', figure = degrade )
         # dcc.Dropdown(
         #     id = 'selector',
@@ -203,6 +249,7 @@ app.layout = html.Div(
         dash.dependencies.Output("bar8", "figure"),
         dash.dependencies.Output("bar9", "figure"),
         dash.dependencies.Output("bar10", "figure"),
+        dash.dependencies.Output("heatmaps", "figure")
     ],
     [dash.dependencies.Input("forna-sequence-display", "value")],
 )
@@ -242,7 +289,8 @@ def show_selected_sequences(value):
         )
 
     base_count_hist.update_layout(title="Base Count", barmode="group", bargap=0.1)
-
+    
+    heatmaps = subs(value)
     return (
         [sequences[selected_sequence] for selected_sequence in value],
         df.to_dict("records"),
@@ -257,8 +305,9 @@ def show_selected_sequences(value):
         grapher(value, "deg_pH10"),
         grapher(value, "deg_Mg_50C"),
         grapher(value, "deg_50C"),
+        heatmaps
     )
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, port  = 3004)
