@@ -8,6 +8,8 @@
 
 </br>
 
-#### [Discussion Thread](https://www.kaggle.com/c/stanford-covid-vaccine/discussion/183973)
+#### [Discussion Thread (Kaggle)](https://www.kaggle.com/c/stanford-covid-vaccine/discussion/183973)
+
+#### [Discussion Thread (Plotly)](https://community.plotly.com/t/show-and-tell-rna-visualization-app-for-covid-vaccine-competition-by-stanford-eterna/45050)
 
 #### [Competition Link](https://www.kaggle.com/c/stanford-covid-vaccine/overview)
