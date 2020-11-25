@@ -13,3 +13,4 @@
 #### [Discussion Thread (Plotly)](https://community.plotly.com/t/show-and-tell-rna-visualization-app-for-covid-vaccine-competition-by-stanford-eterna/45050)
 
 #### [Competition Link](https://www.kaggle.com/c/stanford-covid-vaccine/overview)
+#### [LinkedIn Post](https://www.linkedin.com/posts/plotly_datascience-covid-kaggle-ugcPost-6712483900549152768-f5Kx)
