@@ -14,7 +14,7 @@ from dash.exceptions import PreventUpdate
 from dash_table import DataTable
 
 
-train = pd.read_csv("train_outliers_removed.csv")
+train = pd.read_csv("data/train_outliers_removed.csv")
 
 num = 13
 
