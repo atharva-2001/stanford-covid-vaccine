@@ -10,7 +10,7 @@
 
 ![](https://github.com/atharva-2001/stanford-covid-vaccine/blob/master/bin/gif/dash-rna2.gif)
 
-#### [Discussion Thread (Kaggle)](https://www.kaggle.com/c/stanford-covid-vaccine/discussion/183973)
+#### [Discussion Thread (Kaggle)](https://www.kaggle.com/c/stanford-covid-vaccine/discussion/183973) [I deleted my last account, this link won't work :( ]
 
 #### [Discussion Thread (Plotly)](https://community.plotly.com/t/show-and-tell-rna-visualization-app-for-covid-vaccine-competition-by-stanford-eterna/45050)
 
