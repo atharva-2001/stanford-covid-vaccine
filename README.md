@@ -14,6 +14,9 @@ and the app will start running on localhost.    </br>
 
 
  [Discussion Thread (Kaggle)](https://www.kaggle.com/c/stanford-covid-vaccine/discussion/183973) ***Deleted***
+</br> 
 [Discussion Thread (Plotly)](https://community.plotly.com/t/show-and-tell-rna-visualization-app-for-covid-vaccine-competition-by-stanford-eterna/45050)
+</br> 
 [Competition Link](https://www.kaggle.com/c/stanford-covid-vaccine/overview)
+</br> 
 [LinkedIn Post](https://www.linkedin.com/posts/plotly_datascience-covid-kaggle-ugcPost-6712483900549152768-f5Kx)
