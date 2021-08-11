@@ -2,7 +2,7 @@
 ## StanFord Open Vaccine EDA
 
 
-The app plots RNA sequences from the dataset using Forna Container component of Dash Bio. It helps you compare few variables related to the RNAs selected. 
+This Dash app helps you compare data samples from the Eterna dataset which was used in the OpenVaccine: COVID-19 mRNA Vaccine Degradation Prediction, a Kaggle competition organized by Stanford University and Eterna Games. It visualises RNA molecules using `dash_bio.FornaContainer` . 
 
 ![](https://github.com/atharva-2001/stanford-covid-vaccine/blob/master/bin/gif/dash-rna2.gif)
 
