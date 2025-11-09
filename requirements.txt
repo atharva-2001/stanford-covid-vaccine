@@ -1,4 +1,4 @@
-Brotli==1.0.9
+Brotli==1.2.0
 click==7.1.2
 dash==1.16.0
 dash-bio==0.4.8
